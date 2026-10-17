@@ -7,6 +7,20 @@ class Blockchain:
         self.pg_blocks = []
         self.pg_current_transactions = []
 
+    def pg_add_transaction(self, sender, receiver, amount):
+        if amount <= 0:
+            raise ValueError("The amount of money in transaction has to be greater than 0!")
+
+        transaction = {
+            "sender": sender,
+            "recipient": receiver,
+            "amount": amount
+        }
+
+        self.pg_current_transactions.append(transaction)
+
+        return len(self.pg_blocks)
+
     def pg_add_block(self, nonce=60076):
         if len(self.pg_blocks) == 0:
             block = {
@@ -29,6 +43,7 @@ class Blockchain:
                 "previous_hash": previous_hash
             }
 
+            # Proof of Work
             while True:
                 hash_value = self.pg_hash(block)
 
