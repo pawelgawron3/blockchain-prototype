@@ -69,3 +69,16 @@ class Blockchain:
         lastBlock_string = json.dumps(lastBlock, sort_keys=True)
         lastBlock_encoded = lastBlock_string.encode()
         return hashlib.sha256(lastBlock_encoded).hexdigest()
+
+    def pg_display_chain(self):
+        for block in self.pg_blocks:
+            print(f"\n--- Block {block['index']} ---")
+            print(f"Time: {block['timestamp']}")
+            print(f"Transactions: {block['transactions']}")
+            print(f"Nonce: {block['nonce']}")
+            print(f"Previous hash: {block['previous_hash']}")
+            print(f"Hash: {block['hash']}")
+            print(
+                f"Hash ends with '0000': "
+                f"{block['hash'].endswith('0000')}"
+            )
