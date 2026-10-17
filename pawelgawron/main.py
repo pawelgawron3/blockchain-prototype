@@ -75,6 +75,17 @@ class Blockchain:
 
         return hashlib.sha256(block_encoded).hexdigest()
 
+    def pg_is_chain_valid(self):
+        for i in range(len(self.pg_blocks)):
+            block = self.pg_blocks[i]
+
+            # 1. Does the hash of the block still match with its data?
+            if self.pg_hash(block) != block['hash']:
+                print(f"Block {i}: invalid hash!")
+                return False
+
+        return True
+
     def pg_display_chain(self):
         for block in self.pg_blocks:
             print(f"\n--- Block {block['index']} ---")
@@ -103,3 +114,5 @@ if __name__ == "__main__":
     pg_blockchain.pg_add_block()
 
     pg_blockchain.pg_display_chain()
+
+    print(f"\nValid chain: {pg_blockchain.pg_is_chain_valid()}")
