@@ -72,7 +72,7 @@ class Blockchain:
 
         block_string = json.dumps(data, sort_keys=True)
         block_encoded = block_string.encode()
-        
+
         return hashlib.sha256(block_encoded).hexdigest()
 
     def pg_display_chain(self):
@@ -87,3 +87,19 @@ class Blockchain:
                 f"Hash ends with '0000': "
                 f"{block['hash'].endswith('0000')}"
             )
+
+if __name__ == "__main__":
+    pg_blockchain = Blockchain()
+
+    # The creation of genesis block
+    pg_blockchain.pg_add_block()
+
+    pg_blockchain.pg_add_transaction(
+        sender="Jan",
+        receiver="Ala",
+        amount=500
+    )
+
+    pg_blockchain.pg_add_block()
+
+    pg_blockchain.pg_display_chain()
