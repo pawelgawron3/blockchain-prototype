@@ -65,10 +65,15 @@ class Blockchain:
 
         return self.pg_blocks[-1]
 
-    def pg_hash(self, lastBlock):
-        lastBlock_string = json.dumps(lastBlock, sort_keys=True)
-        lastBlock_encoded = lastBlock_string.encode()
-        return hashlib.sha256(lastBlock_encoded).hexdigest()
+    def pg_hash(self, block):
+        data = {
+            key: value for key, value in block.items() if key != "hash"
+        }
+
+        block_string = json.dumps(data, sort_keys=True)
+        block_encoded = block_string.encode()
+        
+        return hashlib.sha256(block_encoded).hexdigest()
 
     def pg_display_chain(self):
         for block in self.pg_blocks:
