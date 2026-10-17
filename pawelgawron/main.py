@@ -9,24 +9,46 @@ class Blockchain:
 
     def pg_add_block(self, nonce=60076):
         if len(self.pg_blocks) == 0:
-            genesis = {}
-            genesis["index"] = 0
-            genesis["timestamp"] = time()
-            genesis["transactions"] = self.pg_current_transactions
-            genesis["nonce"] = nonce
-            genesis["previous_hash"] = "Gawron"
-            self.pg_blocks.append(genesis)
-        else:
-            lastBlock = self.pg_blocks[-1]
-            newBlock = {}
-            newBlock["index"] = len(self.pg_blocks)
-            newBlock["timestamp"] = time()
-            newBlock["transactions"] = self.pg_current_transactions
-            newBlock["nonce"] = nonce
-            newBlock["previous_hash"] = self.pg_hash(lastBlock)
-            self.pg_blocks.append(newBlock)
+            block = {
+                "index": 0,
+                "timestamp": time(),
+                "transactions": [],
+                "nonce": nonce,
+                "previous_hash": "Gawron"
+            }
 
+        else:
+            lastBlock = self.pg_get_last_block()
+            previous_hash = lastBlock["hash"]
+
+            block = {
+                "index": len(self.pg_blocks),
+                "timestamp": time(),
+                "transactions": self.pg_current_transactions.copy(),
+                "nonce": 0,
+                "previous_hash": previous_hash
+            }
+
+            while True:
+                hash_value = self.pg_hash(block)
+
+                if hash_value.endswith("0000"):
+                    break
+
+                block["nonce"] += 1
+
+        block["hash"] = self.pg_hash(block)
+
+        self.pg_blocks.append(block)
         self.pg_current_transactions = []
+
+        return block
+
+    def pg_get_last_block(self):
+        if not self.pg_blocks:
+            return None
+
+        return self.pg_blocks[-1]
 
     def pg_hash(self, lastBlock):
         lastBlock_string = json.dumps(lastBlock, sort_keys=True)
