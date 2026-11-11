@@ -145,7 +145,7 @@ def pg_new_transaction():
     if not isinstance(amount, (int, float)) or amount <= 0:
         return jsonify({"error": "Amount must be a positive number"}), 400
 
-    # Dodanie transakcji do mempoolu
+    # Add transaction to mempool
     pg_blockchain.pg_add_transaction(sender, receiver, amount)
 
     return jsonify({
