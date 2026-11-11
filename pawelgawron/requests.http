@@ -1,0 +1,41 @@
+### Wydobycie bloku (bez nowych transakcji - powinno zwrócić błąd 400)
+POST http://127.0.0.1:5000/mine
+Content-Type: application/json
+
+{}
+
+### Dodanie poprawnej transakcji
+POST http://127.0.0.1:5000/transactions/new
+Content-Type: application/json
+
+{
+    "sender": "Jan",
+    "receiver": "Ala",
+    "amount": 500
+}
+
+### Dodanie kolejnej transakcji
+POST http://127.0.0.1:5000/transactions/new
+Content-Type: application/json
+
+{
+    "sender": "Piotr",
+    "receiver": "Anna",
+    "amount": 255
+}
+
+### Próba dodania transakcji z kwotą 0 (powinna zwrócić błąd 400)
+POST http://127.0.0.1:5000/transactions/new
+Content-Type: application/json
+
+{
+    "sender": "Jan",
+    "receiver": "Ala",
+    "amount": 0
+}
+
+### Wydobycie nowego bloku
+POST http://127.0.0.1:5000/mine
+Content-Type: application/json
+
+{}
