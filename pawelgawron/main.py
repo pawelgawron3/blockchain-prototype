@@ -175,6 +175,14 @@ def pg_mine():
             "error": "No transactions available to mine!"
         }), 400
 
+    data = request.get_json() or {}
+    reward = data.get("reward", 10)
+
+    # Add mining reward
+    pg_blockchain.pg_add_transaction(
+        "MINING", "Miner", reward
+    )
+
     pg_block = pg_blockchain.pg_add_block()
 
     return jsonify({
