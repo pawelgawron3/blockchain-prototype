@@ -1,3 +1,4 @@
+from flask import Flask, jsonify
 from time import time
 import hashlib
 import json
@@ -99,20 +100,42 @@ class Blockchain:
                 f"{block['hash'].endswith('0000')}"
             )
 
+app = Flask(__name__)
+
+pg_blockchain = Blockchain()
+    
+# The creation of genesis block
+pg_blockchain.pg_add_block()
+
+@app.route("/chain", methods=["GET"])
+def pg_get_chain():
+    return jsonify({
+        "chain": pg_blockchain.pg_blocks,
+        "length": len(pg_blockchain.pg_blocks)
+    })
+
+@app.route("/mine", methods=["POST"])
+def pg_mine():
+    pg_block = pg_blockchain.pg_add_block()
+
+    return jsonify({
+        "message": "New block mined successfully!",
+        "block": pg_block,
+        "index": pg_block["index"],
+        "length": len(pg_blockchain.pg_blocks)
+    }), 200
+
 if __name__ == "__main__":
-    pg_blockchain = Blockchain()
+    app.run(debug=True)
 
-    # The creation of genesis block
-    pg_blockchain.pg_add_block()
+    # pg_blockchain.pg_add_transaction(
+    #     sender="Jan",
+    #     receiver="Ala",
+    #     amount=500
+    # )
 
-    pg_blockchain.pg_add_transaction(
-        sender="Jan",
-        receiver="Ala",
-        amount=500
-    )
+    # pg_blockchain.pg_add_block()
 
-    pg_blockchain.pg_add_block()
+    # pg_blockchain.pg_display_chain()
 
-    pg_blockchain.pg_display_chain()
-
-    print(f"\nValid chain: {pg_blockchain.pg_is_chain_valid()}")
+    # print(f"\nValid chain: {pg_blockchain.pg_is_chain_valid()}")
