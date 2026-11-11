@@ -116,6 +116,11 @@ def pg_get_chain():
 
 @app.route("/mine", methods=["POST"])
 def pg_mine():
+    if not pg_blockchain.pg_current_transactions:
+        return jsonify({
+            "error": "No transactions available to mine!"
+        }), 400
+
     pg_block = pg_blockchain.pg_add_block()
 
     return jsonify({
