@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from time import time
 import hashlib
 import json
@@ -124,6 +124,36 @@ def pg_mine():
         "index": pg_block["index"],
         "length": len(pg_blockchain.pg_blocks)
     }), 200
+
+
+@app.route("/transactions/new", methods=["POST"])
+def pg_new_transaction():
+    data = request.get_json()
+
+    if not isinstance(data, dict):
+        return jsonify({"error": "Invalid JSON data"}), 400
+
+    required_fields = ["sender", "receiver", "amount"]
+
+    if not all(field in data for field in required_fields):
+        return jsonify({"error": "Missing transaction fields"}), 400
+
+    sender = data["sender"]
+    receiver = data["receiver"]
+    amount = data["amount"]
+
+    if not isinstance(amount, (int, float)) or amount <= 0:
+        return jsonify({"error": "Amount must be a positive number"}), 400
+
+    # Dodanie transakcji do mempoolu
+    pg_blockchain.pg_add_transaction(sender, receiver, amount)
+
+    return jsonify({
+        "message": "Transaction added successfully!",
+        "transaction": pg_blockchain.pg_current_transactions[-1],
+        "pending_transactions": len(pg_blockchain.pg_current_transactions)
+    }), 201
+
 
 if __name__ == "__main__":
     app.run(debug=True)
