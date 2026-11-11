@@ -87,6 +87,45 @@ class Blockchain:
 
         return True
 
+    def pg_merkle_root(self, transactions):
+        if not transactions:
+            return hashlib.sha256(b"").hexdigest()
+
+        # Hash each transaction
+        hashes = []
+
+        for transaction in transactions:
+            transaction_string = json.dumps(
+                transaction,
+                sort_keys=True
+            )
+            transaction_hash = hashlib.sha256(
+                transaction_string.encode()
+            ).hexdigest()
+
+            hashes.append(transaction_hash)
+
+        # Build Merkle Tree
+        while len(hashes) > 1:
+            if len(hashes) % 2 != 0:
+                hashes.append(hashes[-1])
+
+            new_level = []
+
+            for i in range(0, len(hashes), 2):
+                combined = (
+                    bytes.fromhex(hashes[i]) +
+                    bytes.fromhex(hashes[i + 1])
+                )
+
+                new_hash = hashlib.sha256(combined).hexdigest()
+                new_level.append(new_hash)
+
+            hashes = new_level
+
+        return hashes[0]
+
+
     def pg_display_chain(self):
         for block in self.pg_blocks:
             print(f"\n--- Block {block['index']} ---")
