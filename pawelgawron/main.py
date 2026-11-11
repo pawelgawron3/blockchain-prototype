@@ -157,15 +157,3 @@ def pg_new_transaction():
 
 if __name__ == "__main__":
     app.run(debug=True)
-
-    # pg_blockchain.pg_add_transaction(
-    #     sender="Jan",
-    #     receiver="Ala",
-    #     amount=500
-    # )
-
-    # pg_blockchain.pg_add_block()
-
-    # pg_blockchain.pg_display_chain()
-
-    # print(f"\nValid chain: {pg_blockchain.pg_is_chain_valid()}")
