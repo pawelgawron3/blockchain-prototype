@@ -29,7 +29,10 @@ class Blockchain:
                 "timestamp": time(),
                 "transactions": [],
                 "nonce": nonce,
-                "previous_hash": "Gawron"
+                "previous_hash": "Gawron",
+                "merkle_root": self.pg_merkle_root(
+                    self.pg_current_transactions
+                ),
             }
 
         else:
@@ -41,7 +44,10 @@ class Blockchain:
                 "timestamp": time(),
                 "transactions": self.pg_current_transactions.copy(),
                 "nonce": 0,
-                "previous_hash": previous_hash
+                "previous_hash": previous_hash,
+                "merkle_root": self.pg_merkle_root(
+                    self.pg_current_transactions
+                ),
             }
 
             # Proof of Work
@@ -83,6 +89,14 @@ class Blockchain:
             # 1. Does the hash of the block still match with its data?
             if self.pg_hash(block) != block['hash']:
                 print(f"Block {i}: invalid hash!")
+                return False
+
+            # 2. Check Merkle Root
+            calculated_merkle_root = self.pg_merkle_root(
+                block["transactions"]
+            )
+            if calculated_merkle_root != block["merkle_root"]:
+                print(f"Block {i}: invalid Merkle Root!")
                 return False
 
         return True
@@ -134,6 +148,7 @@ class Blockchain:
             print(f"Nonce: {block['nonce']}")
             print(f"Previous hash: {block['previous_hash']}")
             print(f"Hash: {block['hash']}")
+            print(f"Merkle Root: {block['merkle_root']}")
             print(
                 f"Hash ends with '0000': "
                 f"{block['hash'].endswith('0000')}"
